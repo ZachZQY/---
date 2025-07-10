@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工厂端界面示例 - 洗护管理系统</title>
+    <style>
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+        .header {
+            background: #764ba2;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            font-size: 1.5rem;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 60px);
+        }
+        .sidebar {
+            width: 250px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            padding: 20px 0;
+        }
+        .menu-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+            border-left: 3px solid transparent;
+        }
+        .menu-item:hover, .menu-item.active {
+            background: #f3eaff;
+            border-left-color: #764ba2;
+            color: #764ba2;
+        }
+        .menu-item i {
+            margin-right: 10px;
+            width: 20px;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+        .page { display: none; }
+        .page.active { display: block; }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #764ba2;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .order-table th, .order-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .order-table th {
+            background: #764ba2;
+            color: white;
+            font-weight: bold;
+        }
+        .order-table tr:hover {
+            background: #f3eaff;
+        }
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .status-in {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        .status-photo {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status-qc {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-rewash {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-right: 10px;
+        }
+        .btn-primary {
+            background: #764ba2;
+            color: white;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(118, 75, 162, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            z-index: 1000;
+        }
+        @media (max-width: 768px) {
+            .main-container { flex-direction: column; }
+            .sidebar { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">← 返回演示</a>
+    <div class="header">
+        <h1>洗护工厂管理系统</h1>
+        <div class="user-info">
+            <span>操作员：李工</span>
+            <span>工厂：北京一厂</span>
+        </div>
+    </div>
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="menu-item active" onclick="showPage('dashboard')"><i>📊</i>数据大盘</div>
+            <div class="menu-item" onclick="showPage('inbound')"><i>📥</i>衣物入场</div>
+            <div class="menu-item" onclick="showPage('photo')"><i>📸</i>拍照质检</div>
+            <div class="menu-item" onclick="showPage('flow')"><i>🔄</i>衣物流转</div>
+            <div class="menu-item" onclick="showPage('orders')"><i>📋</i>订单追踪</div>
+        </div>
+        <div class="content">
+            <!-- 数据大盘 -->
+            <div id="dashboard" class="page active">
+                <h2>📊 数据大盘</h2>
+                <div class="dashboard">
+                    <div class="stat-card">
+                        <div class="stat-number">500</div>
+                        <div class="stat-label">今日处理衣物(件)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">98%</div>
+                        <div class="stat-label">质检合格率</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">返工件数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">4.9</div>
+                        <div class="stat-label">客户满意度</div>
+                    </div>
+                </div>
+            </div>
+            <!-- 衣物入场 -->
+            <div id="inbound" class="page">
+                <h2>📥 衣物入场</h2>
+                <div style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <div style="margin-bottom: 20px;">
+                        <label>扫描水洗唛/订单号：</label>
+                        <input type="text" style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; width: 250px;">
+                        <button class="btn btn-primary">确认入场</button>
+                    </div>
+                    <table class="order-table">
+                        <thead>
+                            <tr>
+                                <th>衣物编码</th>
+                                <th>类型</th>
+                                <th>客户</th>
+                                <th>状态</th>
+                                <th>入场时间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>G20241201001</td>
+                                <td>羽绒服</td>
+                                <td>李女士</td>
+                                <td><span class="status-badge status-in">已入场</span></td>
+                                <td>2024-12-01 09:10</td>
+                            </tr>
+                            <tr>
+                                <td>G20241201002</td>
+                                <td>运动鞋</td>
+                                <td>王先生</td>
+                                <td><span class="status-badge status-in">已入场</span></td>
+                                <td>2024-12-01 09:15</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- 拍照质检 -->
+            <div id="photo" class="page">
+                <h2>📸 拍照质检</h2>
+                <div style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <table class="order-table">
+                        <thead>
+                            <tr>
+                                <th>衣物编码</th>
+                                <th>类型</th>
+                                <th>客户</th>
+                                <th>质检状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>G20241201001</td>
+                                <td>羽绒服</td>
+                                <td>李女士</td>
+                                <td><span class="status-badge status-photo">待拍照</span></td>
+                                <td><button class="btn btn-primary">拍照</button></td>
+                            </tr>
+                            <tr>
+                                <td>G20241201002</td>
+                                <td>运动鞋</td>
+                                <td>王先生</td>
+                                <td><span class="status-badge status-qc">已质检</span></td>
+                                <td><button class="btn btn-secondary">查看</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- 衣物流转 -->
+            <div id="flow" class="page">
+                <h2>🔄 衣物流转</h2>
+                <div style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <table class="order-table">
+                        <thead>
+                            <tr>
+                                <th>衣物编码</th>
+                                <th>当前环节</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>G20241201001</td>
+                                <td>洗涤</td>
+                                <td><span class="status-badge status-qc">合格</span></td>
+                                <td><button class="btn btn-primary">流转到下环节</button></td>
+                            </tr>
+                            <tr>
+                                <td>G20241201003</td>
+                                <td>质检</td>
+                                <td><span class="status-badge status-rewash">需返洗</span></td>
+                                <td><button class="btn btn-secondary">返洗处理</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- 订单追踪 -->
+            <div id="orders" class="page">
+                <h2>📋 订单追踪</h2>
+                <div style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <table class="order-table">
+                        <thead>
+                            <tr>
+                                <th>订单号</th>
+                                <th>客户</th>
+                                <th>衣物</th>
+                                <th>状态</th>
+                                <th>入场时间</th>
+                                <th>当前环节</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>LA20241201001</td>
+                                <td>李女士</td>
+                                <td>羽绒服</td>
+                                <td><span class="status-badge status-qc">合格</span></td>
+                                <td>2024-12-01 09:10</td>
+                                <td>洗涤</td>
+                                <td><button class="btn btn-primary">详情</button></td>
+                            </tr>
+                            <tr>
+                                <td>LA20241201002</td>
+                                <td>王先生</td>
+                                <td>运动鞋</td>
+                                <td><span class="status-badge status-in">已入场</span></td>
+                                <td>2024-12-01 09:15</td>
+                                <td>拍照</td>
+                                <td><button class="btn btn-primary">详情</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html> 
