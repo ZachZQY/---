@@ -90,6 +90,7 @@
                 <button class="btn btn-primary" onclick="showDemo('ordering')">智能下单系统</button>
                 <button class="btn btn-primary" onclick="showDemo('membership')">充值套餐管理</button>
                 <button class="btn btn-primary" onclick="showDemo('cross-store')">跨店结算系统</button>
+                <button class="btn btn-primary" onclick="showDemo('after-sales')">售后单系统</button>
                 <button class="btn btn-primary" onclick="showDemo('data')">数据大盘</button>
                 <button class="btn btn-primary" onclick="showDemo('factory')">工厂端管理</button>
             </div>
@@ -100,6 +101,7 @@
             <div style="margin-top: 30px; text-align: center;">
                 <a href="store-demo.html" class="btn btn-secondary" target="_blank">门店端界面示例</a>
                 <a href="factory-demo.html" class="btn btn-secondary" target="_blank">工厂端界面示例</a>
+                <a href="after-sales-demo.html" class="btn btn-secondary" target="_blank">售后单演示</a>
             </div>
         </div>
 
@@ -183,6 +185,30 @@
                             <div class="feature-card">
                                 <h4>多卡管理</h4>
                                 <p>支持客户拥有多个门店余额</p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'after-sales':
+                    content.innerHTML = `
+                        <h3>📦 售后单系统演示</h3>
+                        <div class="feature-grid">
+                            <div class="feature-card">
+                                <h4>订单查询</h4>
+                                <p>通过订单号、手机号查询第三方系统订单</p>
+                            </div>
+                            <div class="feature-card">
+                                <h4>售后申请</h4>
+                                <p>选择售后类型、上传问题图片、填写描述</p>
+                            </div>
+                            <div class="feature-card">
+                                <h4>门店工厂协作</h4>
+                                <p>门店受理→工厂确认→处理完成</p>
+                            </div>
+                            <div class="feature-card">
+                                <h4>备注附件</h4>
+                                <p>每个环节可添加备注和上传附件</p>
                             </div>
                         </div>
                     `;

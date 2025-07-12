@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>洗护售后单演示</title>
+  <style>
+    body {
+      font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 480px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      padding: 32px 24px 24px 24px;
+    }
+    h1 {
+      text-align: center;
+      color: #667eea;
+      margin-bottom: 24px;
+    }
+    .form-group {
+      margin-bottom: 18px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #333;
+      font-weight: 500;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 1rem;
+      box-sizing: border-box;
+      margin-bottom: 4px;
+    }
+    textarea {
+      min-height: 60px;
+      resize: vertical;
+    }
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: #667eea;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
+    .btn:active {
+      background: #5a67d8;
+    }
+    .btn-secondary {
+      background: #6c757d;
+    }
+    .order-info {
+      background: #f3f4f6;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 18px;
+      color: #444;
+    }
+    .status-flow {
+      display: flex;
+      justify-content: space-between;
+      margin: 24px 0 12px 0;
+      font-size: 0.9rem;
+    }
+    .status-step {
+      flex: 1;
+      text-align: center;
+      position: relative;
+      color: #b5b5b5;
+      padding: 0 4px;
+    }
+    .status-step.active {
+      color: #667eea;
+      font-weight: bold;
+    }
+    .status-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      right: -50%;
+      top: 50%;
+      width: 100%;
+      height: 2px;
+      background: #e0e7ff;
+      z-index: 0;
+      transform: translateY(-50%);
+    }
+    .status-step.active:not(:last-child)::after {
+      background: #667eea;
+    }
+    .img-upload {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .img-preview {
+      width: 48px;
+      height: 48px;
+      border-radius: 6px;
+      object-fit: cover;
+      border: 1px solid #e5e7eb;
+    }
+    .success {
+      color: #38a169;
+      text-align: center;
+      font-size: 1.1rem;
+      margin: 18px 0 8px 0;
+    }
+    .chat-area {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .chat-message {
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .chat-store {
+      background: #e3f2fd;
+      margin-left: 20px;
+    }
+    .chat-factory {
+      background: #f3e5f5;
+      margin-right: 20px;
+    }
+    .chat-time {
+      font-size: 0.8rem;
+      color: #666;
+      margin-top: 4px;
+    }
+    .role-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      margin-right: 6px;
+    }
+    .role-store {
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+    .role-factory {
+      background: #f3e5f5;
+      color: #7b1fa2;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>洗护售后单演示</h1>
+    <div id="step-query">
+      <div class="form-group">
+        <label>订单号 / 手机号</label>
+        <input id="orderInput" type="text" placeholder="请输入订单号或手机号">
+      </div>
+      <button class="btn" onclick="queryOrder()">查询订单</button>
+    </div>
+    
+    <div id="step-order" style="display:none;">
+      <div class="order-info">
+        <div><b>订单号：</b><span id="orderNo">20240401001</span></div>
+        <div><b>客户：</b>李女士</div>
+        <div><b>商品：</b>羊绒大衣精洗</div>
+        <div><b>金额：</b>￥128.00</div>
+        <div><b>下单时间：</b>2024-04-01 10:23</div>
+        <div><b>取衣时间：</b>2024-04-03 15:30</div>
+      </div>
+      <form id="afterSalesForm" onsubmit="submitAfterSales(event)">
+        <div class="form-group">
+          <label>售后类型</label>
+          <select id="type">
+            <option value="洗涤质量问题">洗涤质量问题</option>
+            <option value="衣物损坏">衣物损坏</option>
+            <option value="颜色褪色">颜色褪色</option>
+            <option value="尺寸变形">尺寸变形</option>
+            <option value="异味残留">异味残留</option>
+            <option value="其他">其他</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>问题描述</label>
+          <textarea id="desc" placeholder="请详细描述问题，如：衣物出现褪色、有异味等"></textarea>
+        </div>
+        <div class="form-group">
+          <label>问题图片</label>
+          <div class="img-upload">
+            <input type="file" accept="image/*" onchange="previewImg(event)">
+            <img id="imgPreview" class="img-preview" style="display:none;"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>期望处理方式</label>
+          <select id="solution">
+            <option value="免费重洗">免费重洗</option>
+            <option value="部分退款">部分退款</option>
+            <option value="全额退款">全额退款</option>
+            <option value="赔偿处理">赔偿处理</option>
+          </select>
+        </div>
+        <button class="btn" type="submit">提交售后单</button>
+      </form>
+    </div>
+    
+    <div id="step-status" style="display:none;">
+      <div class="success">售后单提交成功！</div>
+      <div class="status-flow">
+        <div class="status-step active" id="st1">门店受理</div>
+        <div class="status-step" id="st2">工厂确认</div>
+        <div class="status-step" id="st3">处理完成</div>
+      </div>
+      
+      <div class="chat-area" id="chatArea">
+        <div class="chat-message chat-store">
+          <span class="role-badge role-store">门店</span>
+          <div>客户反映羊绒大衣洗涤后出现褪色问题，已上传照片，请工厂确认处理方案。</div>
+          <div class="chat-time">2024-04-03 16:15</div>
+        </div>
+      </div>
+      
+      <button class="btn" onclick="nextStatus()" id="nextBtn">模拟流转下一步</button>
+    </div>
+  </div>
+  
+  <script>
+    function queryOrder() {
+      const val = document.getElementById('orderInput').value.trim();
+      if (!val) {
+        alert('请输入订单号或手机号');
+        return;
+      }
+      // 模拟查询成功
+      document.getElementById('step-query').style.display = 'none';
+      document.getElementById('step-order').style.display = '';
+    }
+    
+    function previewImg(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const img = document.getElementById('imgPreview');
+        img.src = evt.target.result;
+        img.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+    
+    function submitAfterSales(e) {
+      e.preventDefault();
+      if (!document.getElementById('desc').value.trim()) {
+        alert('请填写问题描述');
+        return;
+      }
+      document.getElementById('step-order').style.display = 'none';
+      document.getElementById('step-status').style.display = '';
+      document.getElementById('st1').classList.add('active');
+      document.getElementById('st2').classList.remove('active');
+      document.getElementById('st3').classList.remove('active');
+      document.getElementById('nextBtn').innerText = '模拟流转下一步';
+      window.statusStep = 1;
+    }
+    
+    function nextStatus() {
+      const chatArea = document.getElementById('chatArea');
+      const now = new Date();
+      const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+      
+      if (window.statusStep === 1) {
+        // 工厂确认
+        document.getElementById('st1').classList.remove('active');
+        document.getElementById('st2').classList.add('active');
+        window.statusStep = 2;
+        document.getElementById('nextBtn').innerText = '模拟处理完成';
+        
+        // 添加工厂回复
+        const factoryMsg = document.createElement('div');
+        factoryMsg.className = 'chat-message chat-factory';
+        factoryMsg.innerHTML = `
+          <span class="role-badge role-factory">工厂</span>
+          <div>已收到售后单，经检查确认为洗涤工艺问题。建议免费重洗，使用专业羊绒洗涤剂。</div>
+          <div class="chat-time">2024-04-03 16:30</div>
+        `;
+        chatArea.appendChild(factoryMsg);
+        chatArea.scrollTop = chatArea.scrollHeight;
+        
+      } else if (window.statusStep === 2) {
+        // 处理完成
+        document.getElementById('st2').classList.remove('active');
+        document.getElementById('st3').classList.add('active');
+        window.statusStep = 3;
+        document.getElementById('nextBtn').style.display = 'none';
+        
+        // 添加门店确认
+        const storeMsg = document.createElement('div');
+        storeMsg.className = 'chat-message chat-store';
+        storeMsg.innerHTML = `
+          <span class="role-badge role-store">门店</span>
+          <div>已通知客户处理方案，客户同意免费重洗。衣物已重新送回工厂处理。</div>
+          <div class="chat-time">2024-04-03 16:45</div>
+        `;
+        chatArea.appendChild(storeMsg);
+        
+        // 添加工厂完成
+        const factoryComplete = document.createElement('div');
+        factoryComplete.className = 'chat-message chat-factory';
+        factoryComplete.innerHTML = `
+          <span class="role-badge role-factory">工厂</span>
+          <div>重洗完成，已通知门店取衣。本次售后处理完毕。</div>
+          <div class="chat-time">2024-04-04 14:20</div>
+        `;
+        chatArea.appendChild(factoryComplete);
+        chatArea.scrollTop = chatArea.scrollHeight;
+      }
+    }
+  </script>
+</body>
+</html> 
